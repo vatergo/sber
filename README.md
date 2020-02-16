@@ -1,2 +1,2 @@
 # sber
-template
+template для диплома
