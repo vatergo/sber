@@ -4,7 +4,8 @@
   "description": "template for sberbank's project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "server": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,14 @@
   "bugs": {
     "url": "https://github.com/vatergo/sber/issues"
   },
-  "homepage": "https://github.com/vatergo/sber#readme"
+  "homepage": "https://github.com/vatergo/sber#readme",
+  "devDependencies": {
+    "concurrently": "^5.1.0",
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "config": "^3.2.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.1"
+  }
 }
