@@ -2,10 +2,12 @@
   "name": "sberbank",
   "version": "1.0.0",
   "description": "template for sberbank's project",
-  "main": "index.js",
+  "main": "webpack.config.js",
   "scripts": {
     "start": "node index.js",
-    "server": "nodemon index.js"
+    "server": "nodemon index.js",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
@@ -26,7 +28,9 @@
   "homepage": "https://github.com/vatergo/sber#readme",
   "devDependencies": {
     "concurrently": "^5.1.0",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "webpack": "^1.12.12",
+    "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
     "config": "^3.2.5",
