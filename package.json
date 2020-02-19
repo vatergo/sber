@@ -4,10 +4,8 @@
   "description": "template for sberbank's project",
   "main": "webpack.config.js",
   "scripts": {
-    "start": "node index.js",
-    "server": "nodemon index.js",
-    "client": "webpack-dev-server",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "server": "babel-node server/app.js",
+    "client": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -27,7 +25,9 @@
   },
   "homepage": "https://github.com/vatergo/sber#readme",
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
     "babel-loader": "^8.0.6",
@@ -40,17 +40,14 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "config": "^3.2.5",
     "express": "^4.17.1",
+    "express-validator": "^6.4.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2"
-  },
-  "babel": {
-    "presets": [
-      "@babel/env",
-      "@babel/react"
-    ]
   }
 }
