@@ -4,7 +4,7 @@
   "description": "project",
   "main": "webpack.config.js",
   "scripts": {
-    "server": "babel-node server/app.js",
+    "start": "babel-node server/app.js",
     "client": "webpack-dev-server"
   },
   "repository": {
