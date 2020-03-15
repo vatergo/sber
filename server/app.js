@@ -5,7 +5,7 @@ import auth from './routes/auth';
 import сategories from './routes/сategories';
 import products from './routes/products';
 
-const port = process.env.PORT;//config.get('port') || 3000;
+const port = config.get('port') || 3000;
 const database = config.get('database');
 
 const app = express();
@@ -17,7 +17,7 @@ app.use(express.static(__dirname + '/public/'));
 
 // send the user to index html page inspite of the url
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname + '/public/', 'index.html'));
+    res.sendFile(__dirname.substring(0, __dirname.lastIndexOf('\\')) + '/public/' + 'index.html');
 });
 
 app.use('/api/auth', auth);
