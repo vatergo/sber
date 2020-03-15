@@ -5,7 +5,7 @@ import auth from './routes/auth';
 import сategories from './routes/сategories';
 import products from './routes/products';
 
-const port = config.get('port') || 3000;
+const port = process.env.PORT;//config.get('port') || 3000;
 const database = config.get('database');
 
 const app = express();
