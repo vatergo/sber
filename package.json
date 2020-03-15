@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "start": "babel-node server/app.js",
-    "client": "webpack-dev-server"
+    "heroku-postbuild": "webpack -p"
   },
   "repository": {
     "type": "git",
