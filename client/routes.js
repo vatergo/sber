@@ -1,22 +1,24 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
-import { Auth } from './pages/Auth';
-import { Main } from './pages/Main';
-import { Other } from './pages/Other';
+import Auth from './pages/Auth';
+import Other from './pages/Other';
+import Catalog from './pages/Catalog';
+import Product from './pages/Product';
 
-export const useRoutes = (isAuthenticated) => {
+const useRoutes = (isAuthenticated) => {
     if (isAuthenticated) {
         return (
             <Switch>
-                <Route path='/main' exact>
-                    <Main />
+                <Route path='/catalog' exact>
+                    <Catalog />
                 </Route>
+                <Route path='/catalog/:id' component={Product} />
                 <Route path='/other' exact>
                     <Other />
                 </Route>
-                <Redirect to='/main' />
-            </Switch>
+                <Redirect to='/catalog' />
+            </Switch >
         );
     }
     return (
@@ -27,4 +29,6 @@ export const useRoutes = (isAuthenticated) => {
             <Redirect to='/' />
         </Switch>
     );
-}
+};
+
+export default useRoutes;

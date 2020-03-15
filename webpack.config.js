@@ -14,7 +14,12 @@ module.exports = {
     port: 9000,
     watchContentBase: true,
     progress: true,
-    historyApiFallback: true
+    historyApiFallback: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000'
+      },
+    }
   },
 
   module: {
@@ -40,7 +45,7 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ["file-loader"]
+        use: "url-loader?limit=1024&name=image/[name].[ext]"
       }
     ]
   }

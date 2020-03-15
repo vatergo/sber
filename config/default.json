@@ -1,5 +1,5 @@
 {
     "port": 3000,
-    "database": "mongodb+srv://vatergo:loveklave@cluster0-2cxw0.azure.mongodb.net/app?retryWrites=true&w=majority",
+    "database": "mongodb+srv://vatergo:loveklave@wool-mary-rljon.mongodb.net/app?retryWrites=true&w=majority",
     "secret": "vermilon"
 }
