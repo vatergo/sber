@@ -47,7 +47,7 @@ class Header extends Component {
                                 onClick={onExit}>
                                 Выйти
                         </Button>}
-                        <Link to={'/other'}>
+                        <Link to={'/basket'}>
                             <IconButton>
                                 <ShoppingCart fontSize="large" />
                             </IconButton>

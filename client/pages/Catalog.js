@@ -38,7 +38,6 @@ class Catalog extends Component {
 const styles = {
     products: {
         display: 'flex',
-        justifyContent: 'space-between',
         flexWrap: 'wrap',
         height: 'calc(100vh - 121px)',
         overflowY: 'scroll',
@@ -54,7 +53,7 @@ const styles = {
         },
         '&:hover': {
             '&::-webkit-scrollbar-thumb': {
-                background: '#6a7d9b',
+                background: '#757575',
             },
         }
     }

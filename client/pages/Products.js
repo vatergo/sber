@@ -75,6 +75,7 @@ const styles = {
         height: 260,
         width: 260,
         marginTop: 8,
+        marginRight: 8,
     },
     media: {
         height: '80%',

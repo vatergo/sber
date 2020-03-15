@@ -45,7 +45,7 @@ class Layout extends Component {
             <div className={classes.root}>
                 <Header userData={this.state.userData} onLogin={this.onLogin.bind(this)} onExit={this.onExit.bind(this)} />
                 <Box className={classes.layout}>
-                    {useRoutes(this.state.userData && this.state.userData.isAdmin)}
+                    {useRoutes(this.state.userData)}
                 </Box>
             </div>
         );

@@ -5,8 +5,10 @@ import { connect } from 'mongoose';
 import auth from './routes/auth';
 import сategories from './routes/сategories';
 import products from './routes/products';
+import basket from './routes/basket';
 
 const port = process.env.PORT;
+//const port = config.get('port');
 const database = config.get('database');
 
 const app = express();
@@ -16,6 +18,7 @@ app.use(json());
 app.use('/api/auth', auth);
 app.use('/api/categories', сategories);
 app.use('/api/products', products);
+app.use('/api/basket', basket);
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.get('*', (req, res) => {

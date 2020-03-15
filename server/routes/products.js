@@ -38,7 +38,7 @@ router.patch('/', (req, res) => {
     Product.findOneAndUpdate({ _id: req.body._id }, req.body)
         .then((data) => {
             if (!data)
-                return res.status('404').json({ message: 'Нет такой категории' })
+                return res.status('404').json({ message: 'Нет такого товара' })
             res.json(data);
         })
         .catch((e) => {
@@ -50,7 +50,7 @@ router.delete('/', (req, res) => {
     Product.findOneAndDelete({ _id: req.body._id })
         .then((data) => {
             if (!data)
-                return res.status('404').json({ message: 'Категория товаров уже удалена' })
+                return res.status('404').json({ message: 'Товар уже удален' })
             res.json(data);
         })
         .catch((e) => {

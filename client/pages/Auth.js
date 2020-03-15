@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent, Typography, DialogTitle, IconButton } from '@material-ui/core';
+import { Button, TextField, Dialog, DialogActions, DialogContent, Snackbar, DialogTitle, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -48,48 +48,55 @@ class Auth extends Component {
         const { classes, isOpen } = this.props;
         const { login, password, title } = this.state;
         return (
-            <Dialog
-                open={isOpen}>
-                <DialogTitle>
-                    Авторизация
+            <>
+                <Dialog
+                    open={isOpen}>
+                    <DialogTitle>
+                        Авторизация
                     <IconButton className={classes.closeButton} onClick={this.onClose.bind(this)}>
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
-                <DialogContent className={classes.content}>
-                    <TextField
-                        value={login}
-                        variant='outlined'
-                        fullWidth
-                        label="Логин"
-                        onChange={({ target }) => this.setState({ login: target.value })} />
-                    <TextField
-                        value={password}
-                        style={{ marginTop: 10 }}
-                        variant='outlined'
-                        fullWidth
-                        label="Пароль"
-                        type="password"
-                        onChange={({ target }) => this.setState({ password: target.value })} />
-                    <Typography variant="caption" color='textSecondary'>{title}</Typography>
-                </DialogContent>
-                <DialogActions className={classes.actions}>
-                    <Button
-                        onClick={this.onLogin.bind(this)}
-                        variant='contained'
-                        color="secondary"
-                        disabled={!(login.length > 6 && password.length > 6)}>
-                        Войти
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent className={classes.content}>
+                        <TextField
+                            value={login}
+                            variant='outlined'
+                            fullWidth
+                            label="Логин"
+                            onChange={({ target }) => this.setState({ login: target.value })} />
+                        <TextField
+                            value={password}
+                            style={{ marginTop: 10 }}
+                            variant='outlined'
+                            fullWidth
+                            label="Пароль"
+                            type="password"
+                            onChange={({ target }) => this.setState({ password: target.value })} />
+                    </DialogContent>
+                    <DialogActions className={classes.actions}>
+                        <Button
+                            onClick={this.onLogin.bind(this)}
+                            variant='contained'
+                            color="secondary"
+                            disabled={!(login.length > 6 && password.length > 6)}>
+                            Войти
                 </Button>
-                    <Button
-                        onClick={this.onRegister.bind(this)}
-                        variant='contained'
-                        color="primary"
-                        disabled={!(login.length > 6 && password.length > 6)}>
-                        Зарегистрироваться
+                        <Button
+                            onClick={this.onRegister.bind(this)}
+                            variant='contained'
+                            color="primary"
+                            disabled={!(login.length > 6 && password.length > 6)}>
+                            Зарегистрироваться
                 </Button>
-                </DialogActions>
-            </Dialog>
+                    </DialogActions>
+                </Dialog>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal :'right' }}
+                    open={!!title}
+                    autoHideDuration={3000}
+                    onClose={() => this.setState({ title: '' })}
+                    message={title} />
+            </>
         );
     }
 }
