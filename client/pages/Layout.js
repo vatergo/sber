@@ -11,7 +11,6 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        height: 'calc(100vh - 64px)',
     },
     layout: {
         width: '80vw',
@@ -21,15 +20,32 @@ const styles = {
 class Layout extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            userData: JSON.parse(localStorage.getItem('userData')),
+        };
+    }
+
+    onExit() {
+        localStorage.removeItem('userData');
+        this.setState({
+            userData: undefined,
+        });
+    }
+
+    onLogin() {
+        this.setState({
+            userData: JSON.parse(localStorage.getItem('userData')),
+        });
     }
 
     render() {
         const { classes } = this.props;
+        
         return (
             <div className={classes.root}>
-                <Header />
+                <Header userData={this.state.userData} onLogin={this.onLogin.bind(this)} onExit={this.onExit.bind(this)} />
                 <Box className={classes.layout}>
-                    {useRoutes(true)}
+                    {useRoutes(this.state.userData && this.state.userData.isAdmin)}
                 </Box>
             </div>
         );

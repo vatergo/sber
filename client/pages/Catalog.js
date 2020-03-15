@@ -22,7 +22,7 @@ class Catalog extends Component {
         const { selectedCategory } = this.state;
         return (
             <>
-                <Grid container spacing={3}>
+                <Grid container>
                     <Grid item xs={3}>
                         <Categories selected={selectedCategory.index} onClick={this.onSelectCategory.bind(this)} />
                     </Grid>
@@ -40,7 +40,24 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-    },
+        height: 'calc(100vh - 121px)',
+        overflowY: 'scroll',
+        '&::-webkit-scrollbar': {
+            width: 6,
+        },
+        '&::-webkit-scrollbar-track': {
+            borderRadius: 4,
+        },
+        '&::-webkit-scrollbar-thumb': {
+            borderRadius: 4,
+            background: 'transparent',
+        },
+        '&:hover': {
+            '&::-webkit-scrollbar-thumb': {
+                background: '#6a7d9b',
+            },
+        }
+    }
 };
 
 

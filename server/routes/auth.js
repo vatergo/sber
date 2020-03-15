@@ -21,7 +21,7 @@ router.post(
                 errors: errors.array()
             });
         }
-        const { login, password } = req.body;
+        const { login, password, isAdmin } = req.body;
         User.findOne({ login: login })
             .then((data) => {
                 if (data) {
@@ -29,7 +29,8 @@ router.post(
                 }
                 new User({
                     login: login,
-                    password: hashSync(password, 8)
+                    password: hashSync(password, 8),
+                    isAdmin: isAdmin,
                 }).save();
                 return res.status(201).json({ message: 'Пользователь зарегестрирован' })
             })
@@ -60,7 +61,7 @@ router.post(
                 }
                 if (compareSync(password, data.password)) {
                     const token = sign({ userId: data.id }, config.get('secret'), { expiresIn: '1h' });
-                    return res.json({ token, userId: data.id });
+                    return res.json({ token, userId: data.id, isAdmin: data.isAdmin });
                 }
                 return res.status(401).json({ message: 'Неверный пароль' });
             })

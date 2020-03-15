@@ -1,42 +1,110 @@
 import React, { Component } from 'react';
-import { AppBar, Toolbar, Typography, Button, Paper, Container, TextField } from '@material-ui/core';
+import { Button, TextField, Dialog, DialogActions, DialogContent, Typography, DialogTitle, IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios';
-
 
 class Auth extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            title: '',
+            login: '',
+            password: '',
+        }
+    }
+
+    onLogin() {
+        const { login, password } = this.state;
+        axios.post('/api/auth/login', { login, password })
+            .then((result) => {
+                localStorage.setItem('userData', JSON.stringify(result.data));
+                this.setState({ login: '', password: '', title: '' });
+                this.props.onLogin();
+                this.props.onClose();
+            })
+            .catch((er) => this.setState({
+                title: er.response.data.message,
+            }));
+    }
+
+    onRegister() {
+        const { login, password } = this.state;
+        axios.post('/api/auth/register', { login, password })
+            .then((result) => this.setState({
+                title: result.data.message,
+            }))
+            .catch((er) => this.setState({
+                title: er.response.data.message,
+            }));
+    }
+
+    onClose() {
+        this.setState({ login: '', password: '', title: '' });
+        this.props.onClose();
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, isOpen } = this.props;
+        const { login, password, title } = this.state;
         return (
-            <Paper elevation={3} className={classes.form}>
-                <TextField
-                    fullWidth
-                    label="Логин"
-                />
-                <TextField
-                    fullWidth
-                    label="Пароль"
-                    type="password"
-                />
-                <Button className={classes.button}>
-                    Войти
+            <Dialog
+                open={isOpen}>
+                <DialogTitle>
+                    Авторизация
+                    <IconButton className={classes.closeButton} onClick={this.onClose.bind(this)}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent className={classes.content}>
+                    <TextField
+                        value={login}
+                        variant='outlined'
+                        fullWidth
+                        label="Логин"
+                        onChange={({ target }) => this.setState({ login: target.value })} />
+                    <TextField
+                        value={password}
+                        style={{ marginTop: 10 }}
+                        variant='outlined'
+                        fullWidth
+                        label="Пароль"
+                        type="password"
+                        onChange={({ target }) => this.setState({ password: target.value })} />
+                    <Typography variant="caption" color='textSecondary'>{title}</Typography>
+                </DialogContent>
+                <DialogActions className={classes.actions}>
+                    <Button
+                        onClick={this.onLogin.bind(this)}
+                        variant='contained'
+                        color="secondary"
+                        disabled={!(login.length > 6 && password.length > 6)}>
+                        Войти
                 </Button>
-                <Button className={classes.button}>
-                    Зарегистрироваться
+                    <Button
+                        onClick={this.onRegister.bind(this)}
+                        variant='contained'
+                        color="primary"
+                        disabled={!(login.length > 6 && password.length > 6)}>
+                        Зарегистрироваться
                 </Button>
-            </Paper>
+                </DialogActions>
+            </Dialog>
         );
     }
 }
 
 const styles = {
-    form: {
-        width: 350,
-        padding: 25,
+    content: {
+        width: 328,
+    },
+    actions: {
+        padding: 20,
+    },
+    closeButton: {
+        position: 'absolute',
+        right: 7,
+        top: 8,
     },
 };
 

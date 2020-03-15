@@ -1,4 +1,5 @@
 import express, { json } from 'express';
+import path from 'path';
 import config from 'config';
 import { connect } from 'mongoose';
 import auth from './routes/auth';
@@ -15,6 +16,11 @@ app.use(json());
 app.use('/api/auth', auth);
 app.use('/api/categories', сategories);
 app.use('/api/products', products);
+
+app.use('/', express.static(path.join(__dirname, 'public')));
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
 
 connect(database, {
     useNewUrlParser: true,

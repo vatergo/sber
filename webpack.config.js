@@ -4,12 +4,12 @@ module.exports = {
   entry: "./client/main.js",
   mode: "development",
   output: {
-    path: __dirname + '/public/build/',
+    path: __dirname + 'server/public/build/',
     filename: "./bundle.js",
     publicPath: "build/"
   },
   devServer: {
-    contentBase: __dirname + '/public/',
+    contentBase: __dirname + 'server/public/',
     compress: true,
     port: 9000,
     watchContentBase: true,

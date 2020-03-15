@@ -1,36 +1,62 @@
 import React, { Component } from 'react';
-import logo from '../../public/logo.jpg';
+import logo from '../../server/public/logo.jpg';
 import { Link } from 'react-router-dom';
-import { withStyles, Typography } from '@material-ui/core';
-import { Instagram, AccountBox, ShoppingBasket } from '@material-ui/icons';
+import { withStyles, Button, IconButton } from '@material-ui/core';
+import { Instagram, AccountBox, ShoppingCart } from '@material-ui/icons';
+import Auth from './Auth';
 
 class Header extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            isOpenAuth: false,
+        };
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, userData, onLogin, onExit } = this.props;
+        const { isOpenAuth } = this.state;
+
         return (
             <>
                 <div className={classes.header}>
                     <div className={classes.tools}>
                         <a href='https://www.instagram.com/wool_mary/' target="_blank" className={classes.link}>
-                            <Instagram fontSize="large" />
+                            <IconButton>
+                                <Instagram fontSize="large" />
+                            </IconButton>
                         </a>
                         <a href='https://vk.com/id171959132' target="_blank" className={classes.link}>
-                            <AccountBox fontSize="large" />
+                            <IconButton>
+                                <AccountBox fontSize="large" />
+                            </IconButton>
                         </a>
                     </div>
                     <Link to={'/catalog'}>
                         <img src={logo} alt='logo' className={classes.logo} />
                     </Link>
                     <div className={classes.tools} style={{ justifyContent: 'flex-end' }}>
-                        <Typography className={classes.auth}>Авторизация</Typography>
-                        <ShoppingBasket fontSize="large" />
+                        {!userData
+                            ? <Button
+                                className={classes.auth}
+                                onClick={() => this.setState({ isOpenAuth: true })}>
+                                Авторизация
+                        </Button>
+                            : <Button
+                                className={classes.auth}
+                                onClick={onExit}>
+                                Выйти
+                        </Button>}
+                        <Link to={'/other'}>
+                            <IconButton>
+                                <ShoppingCart fontSize="large" />
+                            </IconButton>
+                        </Link>
+
                     </div>
                 </div>
                 <div className={classes.divider}>.</div>
+                <Auth isOpen={isOpenAuth} onLogin={onLogin} onClose={() => this.setState({ isOpenAuth: false })} />
             </>
         );
     }
@@ -62,8 +88,9 @@ const styles = {
         color: 'inherit',
     },
     auth: {
-        fontSize: 20,
-        marginRight: 20,
+        color: 'inherit',
+        textTransform: 'none',
+        fontSize: 'medium',
     },
 };
 

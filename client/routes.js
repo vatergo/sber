@@ -1,33 +1,29 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
-import Auth from './pages/Auth';
 import Other from './pages/Other';
 import Catalog from './pages/Catalog';
 import Product from './pages/Product';
 
-const useRoutes = (isAuthenticated) => {
-    if (isAuthenticated) {
+const useRoutes = (isAdmin) => {
+    if (isAdmin) {
         return (
             <Switch>
-                <Route path='/catalog' exact>
-                    <Catalog />
-                </Route>
-                <Route path='/catalog/:id' component={Product} />
-                <Route path='/other' exact>
+                <Route path='/' exact>
                     <Other />
                 </Route>
-                <Redirect to='/catalog' />
-            </Switch >
+                <Redirect to='/' />
+            </Switch>
         );
     }
     return (
         <Switch>
-            <Route path='/' exact>
-                <Auth />
+            <Route path='/catalog' exact>
+                <Catalog />
             </Route>
-            <Redirect to='/' />
-        </Switch>
+            <Route path='/catalog/:id' component={Product} />
+            <Redirect to='/catalog' />
+        </Switch >
     );
 };
 
