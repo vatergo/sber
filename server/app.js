@@ -8,8 +8,8 @@ import products from './routes/products';
 import basket from './routes/basket';
 import orders from './routes/orders';
 
-//const port = process.env.PORT;
-const port = config.get('port');
+const port = process.env.PORT;
+//const port = config.get('port');
 const database = config.get('database');
 
 const app = express();
