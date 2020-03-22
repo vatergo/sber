@@ -42,6 +42,7 @@ class Product extends Component {
                         <Grid item xs={6}>
                             <Card className={classes.card} variant='outlined'>
                                 <CardMedia
+                                    className={classes.media}
                                     component='img'
                                     src={product.src}
                                     title={product.name}
@@ -80,6 +81,13 @@ const styles = {
     card: {
         width: 500,
         height: 500,
+        border: '1px solid #7c6d72',
+    },
+    media: {
+        width: '104%',
+        marginTop: -10,
+        marginLeft: -10,
+        height: '104%',
     },
     cost: {
         color: '#d18193',

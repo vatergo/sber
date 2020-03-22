@@ -76,8 +76,12 @@ const styles = {
         width: 260,
         marginTop: 8,
         marginRight: 8,
+        border: '1px solid #7c6d72',
     },
     media: {
+        width: '104%',
+        marginTop: -4,
+        marginLeft: -4,
         height: '80%',
     },
     title: {

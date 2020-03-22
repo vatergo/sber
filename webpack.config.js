@@ -1,15 +1,16 @@
 const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
   entry: "./client/main.js",
   mode: "development",
   output: {
-    path: __dirname + 'server/public/build/',
+    path: path.resolve(__dirname, 'public/build/'),
     filename: "./bundle.js",
     publicPath: "build/"
   },
   devServer: {
-    contentBase: __dirname + 'server/public/',
+    contentBase: path.resolve(__dirname, 'public/'),
     compress: true,
     port: 9000,
     watchContentBase: true,
@@ -34,18 +35,12 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              modules: true
-            }
-          }
-        ]
+          { loader: "style-loader" },
+          { loader: "css-loader" }]
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: "url-loader?limit=1024&name=image/[name].[ext]"
+        test: /\.(png|svg|jpg|gif|woff|woff2|ttf)$/,
+        use: "url-loader?name=[name].[ext]"
       }
     ]
   }

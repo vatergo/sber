@@ -1,36 +1,139 @@
 import React, { Component } from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent, Snackbar, DialogTitle, IconButton } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { Grid, Snackbar, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import DataGrid, { Column, Editing, Form, Popup, Lookup } from 'devextreme-react/data-grid';
+import { Item } from 'devextreme-react/form';
 import axios from 'axios';
+
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
 
 class Other extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            category: '',
-            addCategory: false,
-            product: '',
-            addProduct: false,
             snackbar: ''
+        }
+        this.loadData = this.loadData.bind(this);
+    }
+
+    loadData() {
+        axios.get('/api/categories')
+            .then((result) => this.setState({
+                dataCategories: result.data,
+            }))
+            .catch((er) => this.setState({
+                snackbar: er.response.data.message,
+            }));
+        if (this.state.selectedCategory) {
+            axios.get(`/api/products/filter?categoryId=${this.state.selectedCategory}`)
+                .then((result) => this.setState({
+                    dataProducts: result.data,
+                }))
+                .catch((er) => this.setState({
+                    snackbar: er.response.data.message,
+                }));
         }
     }
 
-    onAddCategory() {
-        axios.post('/api/categories', { name: this.state.category })
+    componentDidMount() {
+        axios.get('/api/categories')
             .then((result) => this.setState({
-                snackbar: result.data.message,
+                dataCategories: result.data,
             }))
             .catch((er) => this.setState({
                 snackbar: er.response.data.message,
             }));
     }
 
-    onAddProduct() {
-        axios.post('/api/products', this.state.product)
+    onCategoriesRowClick({ data }) {
+        axios.get(`/api/products/filter?categoryId=${data._id}`)
             .then((result) => this.setState({
-                snackbar: result.data.message,
+                selectedCategory: data._id,
+                dataProducts: result.data,
             }))
+            .catch((er) => this.setState({
+                snackbar: er.response.data.message,
+            }));
+    }
+
+    onAddCategory({ data }) {
+        axios.post('/api/categories', { name: data.name })
+            .then((result) => {
+                this.loadData();
+                this.setState({
+                    snackbar: 'Категория успешно добавлена'
+                });
+            })
+            .catch((er) => this.setState({
+                snackbar: er.response.data.message,
+            }));
+    }
+
+    onAddProduct({ data }) {
+        axios.post('/api/products', {
+            name: data.name,
+            description: data.description,
+            src: data.src,
+            cost: data.cost,
+            categoryId: data.categoryId,
+        }).then((result) => {
+            this.loadData();
+            this.setState({
+                snackbar: 'Товар успешно добавлен'
+            });
+        }).catch((er) => this.setState({
+            snackbar: er.response.data.message,
+        }));
+    }
+
+    onUpdateCategory({ data }) {
+        axios.patch('/api/categories', data)
+            .then((result) => {
+                this.loadData();
+                this.setState({
+                    snackbar: 'Категория успешно обновлена'
+                });
+            })
+            .catch((er) => this.setState({
+                snackbar: er.response.data.message,
+            }));
+    }
+
+    onUpdateProduct({ data }) {
+        axios.patch('/api/products', data)
+            .then((result) => {
+                this.loadData();
+                this.setState({
+                    snackbar: 'Товар успешно обновлен'
+                });
+            })
+            .catch((er) => this.setState({
+                snackbar: er.response.data.message,
+            }));
+    }
+
+    onDeleteCategory({ key }) {
+        axios.delete('/api/categories', { data: { _id: key } })
+            .then((result) => {
+                this.setState({
+                    dataCategories: this.state.data.filter((item) => item._id !== result.data._id),
+                    snackbar: er.response.data.message,
+                });
+            })
+            .catch((er) => this.setState({
+                snackbar: er.response.data.message,
+            }));
+    }
+
+    onDeleteProduct({ key }) {
+        axios.delete('/api/products', { data: { _id: key } })
+            .then((result) => {
+                this.setState({
+                    dataProducts: this.state.data.filter((item) => item._id !== result.data._id),
+                    snackbar: er.response.data.message,
+                });
+            })
             .catch((er) => this.setState({
                 snackbar: er.response.data.message,
             }));
@@ -38,87 +141,79 @@ class Other extends Component {
 
     render() {
         const { classes } = this.props;
-        const { category, addCategory, product, addProduct, snackbar } = this.state;
+        const { dataCategories, dataProducts, snackbar } = this.state;
         return (
             <>
-                <Button onClick={() => this.setState({ addCategory: true })}>Добавить новую категорию</Button>
-                <Button onClick={() => this.setState({ addProduct: true })}>Добавить новый продукт</Button>
-                <Dialog
-                    open={addCategory}>
-                    <DialogTitle>
-                        Добавление новой категории
-                        <IconButton className={classes.closeButton} onClick={() => this.setState({ addCategory: false, category: '' })}>
-                            <CloseIcon />
-                        </IconButton>
-                    </DialogTitle>
-                    <DialogContent className={classes.content}>
-                        <TextField
-                            value={category}
-                            variant='outlined'
-                            fullWidth
-                            label="Название"
-                            onChange={({ target }) => this.setState({ category: target.value })} />
-                    </DialogContent>
-                    <DialogActions className={classes.actions}>
-                        <Button
-                            onClick={this.onAddCategory.bind(this)}
-                            variant='contained'
-                            color="secondary"
-                            disabled={!category}>
-                            Добавить категорию
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog
-                    open={addProduct}>
-                    <DialogTitle>
-                        Добавление нового товара
-                        <IconButton className={classes.closeButton} onClick={() => this.setState({ addProduct: false, product: {} })}>
-                            <CloseIcon />
-                        </IconButton>
-                    </DialogTitle>
-                    <DialogContent className={classes.content}>
-                        <TextField
-                            value={product.name}
-                            variant='outlined'
-                            fullWidth
-                            label="Название"
-                            onChange={({ target }) => this.setState({ product: { ...product, name: target.value } })} />
-                        <TextField
-                            value={product.description}
-                            variant='outlined'
-                            fullWidth
-                            label="Описание"
-                            onChange={({ target }) => this.setState({ product: { ...product, description: target.value } })} />
-                        <TextField
-                            value={product.src}
-                            variant='outlined'
-                            fullWidth
-                            label="Ссылка на изображение"
-                            onChange={({ target }) => this.setState({ product: { ...product, src: target.value } })} />
-                        <TextField
-                            value={product.cost}
-                            variant='outlined'
-                            fullWidth
-                            label="Стоимость"
-                            onChange={({ target }) => this.setState({ product: { ...product, cost: target.value } })} />
-                        <TextField
-                            value={product.categoryId}
-                            variant='outlined'
-                            fullWidth
-                            label="ID категории"
-                            onChange={({ target }) => this.setState({ product: { ...product, categoryId: target.value } })} />
-                    </DialogContent>
-                    <DialogActions className={classes.actions}>
-                        <Button
-                            onClick={this.onAddProduct.bind(this)}
-                            variant='contained'
-                            color="secondary"
-                            disabled={!product}>
-                            Добавить товар
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                <Grid container spacing={3} className={classes.root}>
+                    <Grid item xs={3}>
+                        <Typography className={classes.titleDataGrid}>Категории товаров</Typography>
+                        <DataGrid
+                            className={classes.table}
+                            keyExpr="_id"
+                            hoverStateEnabled={true}
+                            dataSource={dataCategories || []}
+                            selection={{ mode: 'single' }}
+                            onRowClick={this.onCategoriesRowClick.bind(this)}
+                            showBorders={true}
+                            showColumnLines={true}
+                            showRowLines={true}
+                            onRowInserted={this.onAddCategory.bind(this)}
+                            onRowUpdated={this.onUpdateCategory.bind(this)}
+                            onRowRemoved={this.onDeleteCategory.bind(this)}>
+                            <Editing
+                                mode="popup"
+                                allowUpdating={true}
+                                allowDeleting={true}
+                                allowAdding={true}
+                                useIcons={true}>
+                                <Popup title="Категория товара" showTitle={true} width={350} height={250} />
+                                <Form>
+                                    <Item dataField="name" colSpan={2} />
+                                </Form>
+
+                            </Editing>
+                            <Column dataField='name' caption='Наименование' />
+                        </DataGrid>
+                    </Grid>
+                    <Grid item xs={9}>
+                        <Typography className={classes.titleDataGrid}>Товары</Typography>
+                        <DataGrid
+                            className={classes.table}
+                            keyExpr="_id"
+                            hoverStateEnabled={true}
+                            selection={{ mode: 'single' }}
+                            dataSource={dataProducts || []}
+                            showBorders={true}
+                            showRowLines={true}
+                            showColumnLines={true}
+                            onRowInserted={this.onAddProduct.bind(this)}
+                            onRowUpdated={this.onUpdateProduct.bind(this)}
+                            onRowRemoved={this.onDeleteProduct.bind(this)}>
+                            <Editing
+                                mode="popup"
+                                allowUpdating={true}
+                                allowDeleting={true}
+                                allowAdding={true}
+                                useIcons={true}>
+                                <Popup title="Товар" showTitle={true} width={700} height={400} />
+                                <Form>
+                                    <Item dataField="name" colSpan={2} />
+                                    <Item dataField="description" colSpan={2} />
+                                    <Item dataField="src" colSpan={2} />
+                                    <Item dataField="cost" colSpan={2} />
+                                    <Item dataField="categoryId" colSpan={2} />
+                                </Form>
+                            </Editing>
+                            <Column dataField='name' caption='Наименование' />
+                            <Column dataField='description' caption='Описание' />
+                            <Column dataField='src' width={65} allowSorting={false} caption='Изображение' cellRender={cellRender} />
+                            <Column dataField='cost' caption='Стоимость' />
+                            <Column dataField="categoryId" caption="Категория">
+                                <Lookup dataSource={dataCategories} valueExpr="_id" displayExpr="name" />
+                            </Column>
+                        </DataGrid>
+                    </Grid>
+                </Grid>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     open={!!snackbar}
@@ -130,17 +225,27 @@ class Other extends Component {
     }
 }
 
+function cellRender(data) {
+    return (
+        <img style={{ width: '50px', height: '50px', objectFit: 'cover' }} src={data.value} />
+    );
+}
+
 const styles = {
-    content: {
-        width: 328,
+    root: {
+        background: 'white',
+        height: 'calc(100vh - 138px)',
+        marginTop: 8,
+        border: '1px solid',
+        borderRadius: 4,
     },
-    actions: {
-        padding: 20,
+    table: {
+        height: 'calc(100vh - 165px)',
     },
-    closeButton: {
+    titleDataGrid: {
+        fontSize: '1.25rem',
         position: 'absolute',
-        right: 7,
-        top: 8,
+        zIndex: 1000,
     },
 };
 

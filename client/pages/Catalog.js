@@ -23,7 +23,7 @@ class Catalog extends Component {
         return (
             <>
                 <Grid container>
-                    <Grid item xs={3}>
+                    <Grid item xs={3} className={classes.categories}>
                         <Categories selected={selectedCategory.index} onClick={this.onSelectCategory.bind(this)} />
                     </Grid>
                     <Grid item xs={9} className={classes.products}>
@@ -36,10 +36,13 @@ class Catalog extends Component {
 }
 
 const styles = {
+    categories: {
+        paddingRight: 5,
+    },
     products: {
         display: 'flex',
         flexWrap: 'wrap',
-        height: 'calc(100vh - 121px)',
+        maxHeight: 'calc(100vh - 130px)',
         overflowY: 'scroll',
         '&::-webkit-scrollbar': {
             width: 6,

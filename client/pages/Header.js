@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from '../../server/public/logo.jpg';
+import logo from '../../public/logo.jpg';
 import { Link } from 'react-router-dom';
 import { withStyles, Button, IconButton } from '@material-ui/core';
 import { Instagram, AccountBox, ShoppingCart } from '@material-ui/icons';
@@ -64,7 +64,8 @@ class Header extends Component {
 
 const styles = {
     header: {
-        width: '80vw',
+        background: 'white',
+        width: 1090,
         height: 120,
         display: 'flex',
         flexDirection: 'row',
@@ -81,7 +82,7 @@ const styles = {
     divider: {
         width: '100%',
         height: 1,
-        background: '#f0f0f0',
+        background: '#7c6d72',
     },
     link: {
         textDecoration: 'none',

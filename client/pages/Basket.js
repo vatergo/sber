@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 import Loading from './Loading';
-import { withStyles, Card, CardContent, CardMedia, Typography, Grid, Button, Snackbar } from '@material-ui/core';
+import {
+    withStyles, Card, CardContent, CardMedia, Typography,
+    Grid, Button, Snackbar, IconButton, Dialog, DialogContent, DialogActions, DialogTitle, TextField
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 
@@ -14,6 +17,10 @@ class Basket extends Component {
             loading: true,
             userData: props.userData,
             snackbar: false,
+            openDialog: false,
+            fio: '',
+            address: '',
+            phone: '',
         });
         this.onDelete.bind(this);
     }
@@ -47,16 +54,23 @@ class Basket extends Component {
     }
 
     onPurchase() {
-        const { data } = this.state;
-        this.setState({ snackbar: true });
+        const { data, fio, address, phone } = this.state;
+        const productsId = data.map((product) => product._id).join(', ');
+        const orderInfo = `ФИО: ${fio}, Адрес: ${address}, Телефон: ${phone}`;
+        const creationDate = new Date().toTimeString();
+        const headers = this.props.userData ? { "Authorization": `Bearer ${this.props.userData.token}` } : {};
+        this.setState({ openDialog: false });
+        axios.post('/api/orders', { productsId, orderInfo, creationDate }, { headers })
+            .then((result) => this.setState({ snackbar: true, fio: '', address: '', phone: '' }))
+            .catch((er) => console.error(er));
         for (let i = 0; i < data.length; i++) {
             this.onDelete(data[i]._id);
-        }
+        };
     }
 
     render() {
         const { classes } = this.props;
-        const { loading, data, snackbar } = this.state;
+        const { loading, data, snackbar, openDialog, fio, address, phone } = this.state;
         const products = data.length === 0
             ? <div className={classes.empty}>
                 <Typography align='center' variant="h5" component="h2">
@@ -88,7 +102,7 @@ class Basket extends Component {
                         Корзина
                 </Typography>
                     <Button className={classes.button}
-                        onClick={this.onPurchase.bind(this)}
+                        onClick={() => this.setState({ openDialog: true })}
                         disabled={data.length === 0}
                         variant="contained"
                         color="primary"
@@ -106,7 +120,48 @@ class Basket extends Component {
                     open={snackbar}
                     autoHideDuration={3000}
                     onClose={() => this.setState({ snackbar: false })}
-                    message={'Заказ успешно оформлен'} />
+                    message={'Заказ успешно оформлен, в течение часа с вами свяжется наш менеджер'} />
+                <Dialog
+                    open={openDialog}>
+                    <DialogTitle>
+                        Добавление новой категории
+                        <IconButton className={classes.closeButtonDialog} onClick={() => this.setState({ openDialog: false })}>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent className={classes.contentDialog}>
+                        <TextField
+                            className={classes.textfield}
+                            value={fio}
+                            variant='outlined'
+                            fullWidth
+                            label="ФИО"
+                            onChange={({ target }) => this.setState({ fio: target.value })} />
+                        <TextField
+                            className={classes.textfield}
+                            value={address}
+                            variant='outlined'
+                            fullWidth
+                            label="Адрес"
+                            onChange={({ target }) => this.setState({ address: target.value })} />
+                        <TextField
+                            className={classes.textfield}
+                            value={phone}
+                            variant='outlined'
+                            fullWidth
+                            label="Телефон"
+                            onChange={({ target }) => this.setState({ phone: target.value })} />
+                    </DialogContent>
+                    <DialogActions className={classes.actions}>
+                        <Button
+                            onClick={this.onPurchase.bind(this)}
+                            variant='contained'
+                            color="secondary"
+                            disabled={!(fio && address && phone)}>
+                            Добавить категорию
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </>
         );
     }
@@ -118,8 +173,12 @@ const styles = {
         width: 260,
         marginTop: 8,
         marginRight: 8,
+        border: '1px solid #7c6d72',
     },
     media: {
+        width: '104%',
+        marginTop: -4,
+        marginLeft: -4,
         height: '80%',
     },
     title: {
@@ -139,7 +198,7 @@ const styles = {
     basket: {
         display: 'flex',
         flexWrap: 'wrap',
-        height: 'calc(100vh - 171px)',
+        maxHeight: 'calc(100vh - 180px)',
         overflowY: 'scroll',
         '&::-webkit-scrollbar': {
             width: 6,
@@ -164,13 +223,30 @@ const styles = {
     },
     closeButton: {
         cursor: 'pointer',
+        '&:hover': {
+            color: '#7c6d72',
+        },
     },
     head: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 8,
-    }
+    },
+    contentDialog: {
+        width: 400,
+    },
+    textfield: {
+        marginBottom: 8,
+    },
+    actions: {
+        padding: 20,
+    },
+    closeButtonDialog: {
+        position: 'absolute',
+        right: 7,
+        top: 8,
+    },
 };
 
 export default withStyles(styles)(Basket);
