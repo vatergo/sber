@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Grid, Snackbar, Typography } from '@material-ui/core';
+import { Grid, Snackbar, Typography, IconButton } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import CloseIcon from '@material-ui/icons/Close';
 import DataGrid, { Column, Editing, Form, Popup, Lookup } from 'devextreme-react/data-grid';
 import { Item } from 'devextreme-react/form';
 import axios from 'axios';
@@ -217,9 +218,16 @@ class Other extends Component {
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     open={!!snackbar}
-                    autoHideDuration={3000}
+                    autoHideDuration={15000}
                     onClose={() => this.setState({ snackbar: '' })}
-                    message={snackbar} />
+                    message={snackbar}
+                    action={
+                        <React.Fragment>
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.setState({ snackbar: '' })}>
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        </React.Fragment>
+                    } />
             </>
         );
     }

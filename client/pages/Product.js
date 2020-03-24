@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Loading from './Loading';
-import { withStyles, Grid, Card, CardMedia, Typography, Button, Snackbar } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import { withStyles, Grid, Card, CardMedia, Typography, Button, Snackbar, IconButton } from '@material-ui/core';
 
 
 class Product extends Component {
@@ -66,9 +67,16 @@ class Product extends Component {
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     open={snackbar}
-                    autoHideDuration={3000}
+                    autoHideDuration={15000}
                     onClose={() => this.setState({ snackbar: false })}
-                    message={'Продукт добавлен в корзину'} />
+                    message={'Продукт добавлен в корзину'}
+                    action={
+                        <React.Fragment>
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.setState({ snackbar: false })}>
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        </React.Fragment>
+                    } />
             </>
         );
     }

@@ -91,11 +91,18 @@ class Auth extends Component {
                     </DialogActions>
                 </Dialog>
                 <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal :'right' }}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     open={!!title}
-                    autoHideDuration={3000}
+                    autoHideDuration={15000}
                     onClose={() => this.setState({ title: '' })}
-                    message={title} />
+                    message={title}
+                    action={
+                        <React.Fragment>
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.setState({ title: '' })}>
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        </React.Fragment>
+                    } />
             </>
         );
     }

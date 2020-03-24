@@ -118,13 +118,20 @@ class Basket extends Component {
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     open={snackbar}
-                    autoHideDuration={3000}
+                    autoHideDuration={15000}
                     onClose={() => this.setState({ snackbar: false })}
-                    message={'Заказ успешно оформлен, в течение часа с вами свяжется наш менеджер'} />
+                    message={'Заказ успешно оформлен, в течение часа с вами свяжется наш менеджер'}
+                    action={
+                        <React.Fragment>
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.setState({ snackbar: false })}>
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        </React.Fragment>
+                    } />
                 <Dialog
                     open={openDialog}>
                     <DialogTitle>
-                        Добавление новой категории
+                        Заполните ваши данные
                         <IconButton className={classes.closeButtonDialog} onClick={() => this.setState({ openDialog: false })}>
                             <CloseIcon />
                         </IconButton>
@@ -158,7 +165,7 @@ class Basket extends Component {
                             variant='contained'
                             color="secondary"
                             disabled={!(fio && address && phone)}>
-                            Добавить категорию
+                            Оформить заказ
                         </Button>
                     </DialogActions>
                 </Dialog>
