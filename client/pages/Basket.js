@@ -4,7 +4,7 @@ import axios from 'axios';
 import Loading from './Loading';
 import {
     withStyles, Card, CardContent, CardMedia, Typography,
-    Grid, Button, Snackbar, IconButton, Dialog, DialogContent, DialogActions, DialogTitle, TextField
+    Grid, Button, Snackbar, IconButton, Dialog, DialogContent, DialogActions, DialogTitle, TextField, MenuItem
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -21,6 +21,8 @@ class Basket extends Component {
             fio: '',
             address: '',
             phone: '',
+            delivery: '',
+            payment: '',
         });
         this.onDelete.bind(this);
     }
@@ -54,14 +56,14 @@ class Basket extends Component {
     }
 
     onPurchase() {
-        const { data, fio, address, phone } = this.state;
+        const { data, fio, address, phone, delivery, payment } = this.state;
         const productsId = data.map((product) => product._id).join(', ');
-        const orderInfo = `ФИО: ${fio}, Адрес: ${address}, Телефон: ${phone}`;
+        const orderInfo = `ФИО: ${fio}, Адрес: ${address}, Телефон: ${phone}, Способ оплаты: ${payment}, , Способ доставки: ${delivery}`;
         const creationDate = new Date().toTimeString();
         const headers = this.props.userData ? { "Authorization": `Bearer ${this.props.userData.token}` } : {};
         this.setState({ openDialog: false });
         axios.post('/api/orders', { productsId, orderInfo, creationDate }, { headers })
-            .then((result) => this.setState({ snackbar: true, fio: '', address: '', phone: '' }))
+            .then((result) => this.setState({ snackbar: true, fio: '', address: '', phone: '', delivery: '', payment: '', paymentSnackbar: false }))
             .catch((er) => console.error(er));
         for (let i = 0; i < data.length; i++) {
             this.onDelete(data[i]._id);
@@ -70,7 +72,7 @@ class Basket extends Component {
 
     render() {
         const { classes } = this.props;
-        const { loading, data, snackbar, openDialog, fio, address, phone } = this.state;
+        const { loading, data, snackbar, openDialog, fio, address, phone, delivery, payment, paymentSnackbar } = this.state;
         const products = data.length === 0
             ? <div className={classes.empty}>
                 <Typography align='center' variant="h5" component="h2">
@@ -120,7 +122,7 @@ class Basket extends Component {
                     open={snackbar}
                     autoHideDuration={15000}
                     onClose={() => this.setState({ snackbar: false })}
-                    message={'Заказ успешно оформлен, в течение часа с вами свяжется наш менеджер'}
+                    message={'Ваш заказ собирается. В течение дня вам на телефон придет трек-номер для отслеживания'}
                     action={
                         <React.Fragment>
                             <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.setState({ snackbar: false })}>
@@ -158,6 +160,28 @@ class Basket extends Component {
                             fullWidth
                             label="Телефон"
                             onChange={({ target }) => this.setState({ phone: target.value })} />
+                        <TextField
+                            select
+                            className={classes.textfield}
+                            value={delivery}
+                            variant='outlined'
+                            fullWidth
+                            label="Способ доставки"
+                            onChange={({ target }) => this.setState({ delivery: target.value })} >
+                            <MenuItem value='Почта Росссии'>Почта Росссии</MenuItem>
+                            <MenuItem value='BoxBerry'>BoxBerry</MenuItem>
+                        </TextField >
+                        <TextField
+                            select
+                            className={classes.textfield}
+                            value={payment}
+                            variant='outlined'
+                            fullWidth
+                            label="Способ оплаты"
+                            onChange={({ target }) => this.setState({ payment: target.value, paymentSnackbar: !paymentSnackbar })} >
+                            <MenuItem value='Наложенный платёж'>Наложенный платёж</MenuItem>
+                            <MenuItem value='Предоплата'>Предоплата на карту Сбербанка</MenuItem>
+                        </TextField >
                     </DialogContent>
                     <DialogActions className={classes.actions}>
                         <Button
@@ -169,6 +193,18 @@ class Basket extends Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    open={paymentSnackbar && payment === 'Предоплата'}
+                    onClose={() => this.setState({ snackbar: false })}
+                    message={`Перед оформлением произведите оплату в ${data.length > 0 ? data.map(a => parseInt(a.cost)).reduce((a, b) => a + b) : 0}₽ по номеру карты: 4000 1234 5678 9101`}
+                    action={
+                        <React.Fragment>
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.setState({ paymentSnackbar: false })}>
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        </React.Fragment>
+                    } />
             </>
         );
     }
