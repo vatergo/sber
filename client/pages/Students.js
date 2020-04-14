@@ -28,15 +28,16 @@ class Students extends Component {
                             selected={selectedStudent ? selectedStudent.index : undefined}
                             onClick={this.onSelectStudent.bind(this)} />
                     </Grid>
-                    {selectedStudent
-                        ? <Grid item xs={9} className={classes.info}>
-                            <Info selected={selectedStudent} />
-                        </Grid>
-                        : <div className={classes.empty}>
-                            <Typography align='center' variant="h5" component="h2">
-                                Выберите студента
+                    <Grid item xs={9} className={classes.info}>
+                        {selectedStudent
+                            ? <Info selected={selectedStudent} />
+                            : <div className={classes.empty}>
+                                <Typography align='center' variant="h5" component="h2">
+                                    Выберите студента
                             </Typography>
-                        </div>}
+                            </div>}
+                    </Grid>
+
                 </Grid>
             </>
         );
@@ -55,7 +56,6 @@ const styles = {
         paddingRight: 5,
     },
     info: {
-        display: 'flex',
         flexWrap: 'wrap',
         maxHeight: 'calc(100vh - 130px)',
         overflowY: 'scroll',
