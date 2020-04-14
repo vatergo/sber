@@ -21,8 +21,8 @@ class Students extends Component {
         const { classes } = this.props;
         const { selectedStudent } = this.state;
         return (
-            <Paper className={classes.root}>
-                <Grid container>
+            <>
+                <Grid container className={classes.root}>
                     <Grid item xs={3} className={classes.list}>
                         <ListOfStudents
                             selected={selectedStudent ? selectedStudent.index : undefined}
@@ -38,14 +38,18 @@ class Students extends Component {
                             </Typography>
                         </div>}
                 </Grid>
-            </Paper>
+            </>
         );
     }
 }
 
 const styles = {
     root: {
-        height: 'calc(100vh - 130px)',
+        background: 'white',
+        height: 'calc(100vh - 138px)',
+        marginTop: 8,
+        border: '1px solid',
+        borderRadius: 4,
     },
     list: {
         paddingRight: 5,
