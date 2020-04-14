@@ -41,6 +41,7 @@ class Info extends Component {
                 if (result.data.length >= 0)
                     this.setState({
                         data: result.data,
+                        currentVers: 0,
                     });
             })
             .catch((er) => console.error(er));
