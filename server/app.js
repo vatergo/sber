@@ -3,12 +3,10 @@ import path from 'path';
 import config from 'config';
 import { connect } from 'mongoose';
 import auth from './routes/auth';
-import сategories from './routes/сategories';
-import products from './routes/products';
-import basket from './routes/basket';
-import orders from './routes/orders';
+import students from './routes/students';
+import info from './routes/info';
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 //const port = config.get('port');
 const database = config.get('database');
 
@@ -17,10 +15,8 @@ const app = express();
 app.use(json());
 
 app.use('/api/auth', auth);
-app.use('/api/categories', сategories);
-app.use('/api/products', products);
-app.use('/api/basket', basket);
-app.use('/api/orders', orders);
+app.use('/api/students', students);
+app.use('/api/info', info);
 
 app.use('/', express.static(path.join(__dirname, '../public')));
 app.get('*', (req, res) => {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Grid, Snackbar, Typography, IconButton } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
-import DataGrid, { Column, Editing, Form, Popup, Lookup } from 'devextreme-react/data-grid';
+import DataGrid, { Column, Editing, Form, Popup, SearchPanel } from 'devextreme-react/data-grid';
 import { Item } from 'devextreme-react/form';
 import axios from 'axios';
 
@@ -19,51 +19,70 @@ class Other extends Component {
     }
 
     loadData() {
-        axios.get('/api/categories')
-            .then((result) => this.setState({
-                dataCategories: result.data,
-            }))
+        axios.get(`/api/students/filter?userId=${this.props.userData.userId}`)
+            .then((result) => {
+                if (result.data.length > 0) {
+                    axios.get(`/api/info/filter?studentId=${result.data[0]._id}`)
+                        .then((result2) => this.setState({
+                            dataInfo: result2.data,
+                            dataStudents: result.data,
+                            selectedStudent: result.data[0]._id,
+                        }))
+                        .catch((er) => this.setState({
+                            snackbar: er.response.data.message,
+                        }));
+                } else {
+                    this.setState({
+                        dataStudents: result.data,
+                    });
+                }
+            })
             .catch((er) => this.setState({
                 snackbar: er.response.data.message,
             }));
-        if (this.state.selectedCategory) {
-            axios.get(`/api/products/filter?categoryId=${this.state.selectedCategory}`)
-                .then((result) => this.setState({
-                    dataProducts: result.data,
-                }))
-                .catch((er) => this.setState({
-                    snackbar: er.response.data.message,
-                }));
-        }
     }
 
     componentDidMount() {
-        axios.get('/api/categories')
+        axios.get(`/api/students/filter?userId=${this.props.userData.userId}`)
+            .then((result) => {
+                if (result.data.length > 0) {
+                    axios.get(`/api/info/filter?studentId=${result.data[0]._id}`)
+                        .then((result2) => this.setState({
+                            dataInfo: result2.data,
+                            dataStudents: result.data,
+                            selectedStudent: result.data[0]._id,
+                        }))
+                        .catch((er) => this.setState({
+                            snackbar: er.response.data.message,
+                        }));
+                } else {
+                    this.setState({
+                        dataStudents: result.data,
+                    });
+                }
+            })
+            .catch((er) => this.setState({
+                snackbar: er.response.data.message,
+            }));
+    }
+
+    onStudentsRowClick({ data }) {
+        axios.get(`/api/info/filter?studentId=${data._id}`)
             .then((result) => this.setState({
-                dataCategories: result.data,
+                selectedStudent: data._id,
+                dataInfo: result.data,
             }))
             .catch((er) => this.setState({
                 snackbar: er.response.data.message,
             }));
     }
 
-    onCategoriesRowClick({ data }) {
-        axios.get(`/api/products/filter?categoryId=${data._id}`)
-            .then((result) => this.setState({
-                selectedCategory: data._id,
-                dataProducts: result.data,
-            }))
-            .catch((er) => this.setState({
-                snackbar: er.response.data.message,
-            }));
-    }
-
-    onAddCategory({ data }) {
-        axios.post('/api/categories', { name: data.name })
+    onAddStudent({ data }) {
+        axios.post('/api/students', { name: data.name, userId: this.props.userData.userId })
             .then((result) => {
                 this.loadData();
                 this.setState({
-                    snackbar: 'Категория успешно добавлена'
+                    snackbar: 'Студент добавлена'
                 });
             })
             .catch((er) => this.setState({
@@ -71,29 +90,31 @@ class Other extends Component {
             }));
     }
 
-    onAddProduct({ data }) {
-        axios.post('/api/products', {
-            name: data.name,
-            description: data.description,
-            src: data.src,
-            cost: data.cost,
-            categoryId: data.categoryId,
+    onAddInfo({ data }) {
+        axios.post('/api/Info', {
+            studentId: this.state.selectedStudent,
+            photo: data.photo,
+            birthday: data.birthday,
+            address: data.address,
+            education: data.education,
+            info: data.info,
+            diplom: data.diplom,
         }).then((result) => {
             this.loadData();
             this.setState({
-                snackbar: 'Товар успешно добавлен'
+                snackbar: 'Информация добавлена'
             });
         }).catch((er) => this.setState({
             snackbar: er.response.data.message,
         }));
     }
 
-    onUpdateCategory({ data }) {
-        axios.patch('/api/categories', data)
+    onUpdateStudent({ data }) {
+        axios.patch('/api/students', data)
             .then((result) => {
                 this.loadData();
                 this.setState({
-                    snackbar: 'Категория успешно обновлена'
+                    snackbar: 'Имя изменено'
                 });
             })
             .catch((er) => this.setState({
@@ -101,12 +122,12 @@ class Other extends Component {
             }));
     }
 
-    onUpdateProduct({ data }) {
-        axios.patch('/api/products', data)
+    onUpdateInfo({ data }) {
+        axios.patch('/api/Info', data)
             .then((result) => {
                 this.loadData();
                 this.setState({
-                    snackbar: 'Товар успешно обновлен'
+                    snackbar: 'Информация обновлена'
                 });
             })
             .catch((er) => this.setState({
@@ -114,11 +135,11 @@ class Other extends Component {
             }));
     }
 
-    onDeleteCategory({ key }) {
-        axios.delete('/api/categories', { data: { _id: key } })
+    onDeleteStudent({ key }) {
+        axios.delete('/api/students', { data: { _id: key } })
             .then((result) => {
                 this.setState({
-                    dataCategories: this.state.data.filter((item) => item._id !== result.data._id),
+                    dataStudents: this.state.data.filter((item) => item._id !== result.data._id),
                     snackbar: er.response.data.message,
                 });
             })
@@ -127,11 +148,11 @@ class Other extends Component {
             }));
     }
 
-    onDeleteProduct({ key }) {
-        axios.delete('/api/products', { data: { _id: key } })
+    onDeleteInfo({ key }) {
+        axios.delete('/api/Info', { data: { _id: key } })
             .then((result) => {
                 this.setState({
-                    dataProducts: this.state.data.filter((item) => item._id !== result.data._id),
+                    dataInfo: this.state.data.filter((item) => item._id !== result.data._id),
                     snackbar: er.response.data.message,
                 });
             })
@@ -142,76 +163,81 @@ class Other extends Component {
 
     render() {
         const { classes } = this.props;
-        const { dataCategories, dataProducts, snackbar } = this.state;
+        const { dataStudents, dataInfo, snackbar } = this.state;
         return (
             <>
                 <Grid container spacing={3} className={classes.root}>
                     <Grid item xs={3}>
-                        <Typography className={classes.titleDataGrid}>Категории товаров</Typography>
+                        <Typography className={classes.titleDataGrid}>Студент</Typography>
                         <DataGrid
                             className={classes.table}
                             keyExpr="_id"
                             hoverStateEnabled={true}
-                            dataSource={dataCategories || []}
+                            dataSource={dataStudents || []}
                             selection={{ mode: 'single' }}
-                            onRowClick={this.onCategoriesRowClick.bind(this)}
+                            onRowClick={this.onStudentsRowClick.bind(this)}
                             showBorders={true}
                             showColumnLines={true}
                             showRowLines={true}
-                            onRowInserted={this.onAddCategory.bind(this)}
-                            onRowUpdated={this.onUpdateCategory.bind(this)}
-                            onRowRemoved={this.onDeleteCategory.bind(this)}>
+                            onRowInserted={this.onAddStudent.bind(this)}
+                            onRowUpdated={this.onUpdateStudent.bind(this)}
+                            onRowRemoved={this.onDeleteStudent.bind(this)}>
+                            <SearchPanel visible={true}
+                                width={0}
+                                placeholder="Поиск..." />
                             <Editing
                                 mode="popup"
                                 allowUpdating={true}
                                 allowDeleting={true}
-                                allowAdding={true}
+                                allowAdding={dataStudents && dataStudents.length === 0}
                                 useIcons={true}>
-                                <Popup title="Категория товара" showTitle={true} width={350} height={250} />
+                                <Popup title="Студент" showTitle={true} width={350} height={250} />
                                 <Form>
                                     <Item dataField="name" colSpan={2} />
                                 </Form>
-
                             </Editing>
-                            <Column dataField='name' caption='Наименование' />
+                            <Column dataField='name' caption='ФИО' />
                         </DataGrid>
                     </Grid>
                     <Grid item xs={9}>
-                        <Typography className={classes.titleDataGrid}>Товары</Typography>
+                        <Typography className={classes.titleDataGrid}>Информация</Typography>
                         <DataGrid
                             className={classes.table}
                             keyExpr="_id"
                             hoverStateEnabled={true}
                             selection={{ mode: 'single' }}
-                            dataSource={dataProducts || []}
+                            dataSource={dataInfo || []}
                             showBorders={true}
                             showRowLines={true}
                             showColumnLines={true}
-                            onRowInserted={this.onAddProduct.bind(this)}
-                            onRowUpdated={this.onUpdateProduct.bind(this)}
-                            onRowRemoved={this.onDeleteProduct.bind(this)}>
+                            onRowInserted={this.onAddInfo.bind(this)}
+                            onRowUpdated={this.onUpdateInfo.bind(this)}
+                            onRowRemoved={this.onDeleteInfo.bind(this)}>
+                            <SearchPanel visible={true}
+                                width={240}
+                                placeholder="Поиск..." />
                             <Editing
                                 mode="popup"
                                 allowUpdating={true}
                                 allowDeleting={true}
                                 allowAdding={true}
                                 useIcons={true}>
-                                <Popup title="Товар" showTitle={true} width={700} height={400} />
+                                <Popup title="Информация" showTitle={true} width={700} height={400} />
                                 <Form>
-                                    <Item dataField="name" colSpan={2} />
-                                    <Item dataField="description" colSpan={2} />
-                                    <Item dataField="src" colSpan={2} />
-                                    <Item dataField="cost" colSpan={2} />
-                                    <Item dataField="categoryId" colSpan={2} />
+                                    <Item dataField="photo" colSpan={2} />
+                                    <Item dataField="birthday" colSpan={2} />
+                                    <Item dataField="address" colSpan={2} />
+                                    <Item dataField="education" colSpan={2} />
+                                    <Item dataField="info" colSpan={2} />
+                                    <Item dataField="diplom" colSpan={2} />
                                 </Form>
                             </Editing>
-                            <Column dataField='name' caption='Наименование' />
-                            <Column dataField='description' caption='Описание' />
-                            <Column dataField='src' width={65} allowSorting={false} caption='Изображение' cellRender={cellRender} />
-                            <Column dataField='cost' caption='Стоимость' />
-                            <Column dataField="categoryId" caption="Категория">
-                                <Lookup dataSource={dataCategories} valueExpr="_id" displayExpr="name" />
-                            </Column>
+                            <Column dataField='photo' width={65} allowSorting={false} caption='Фото' cellRender={cellRender} />
+                            <Column dataField='birthday' dataType='date' caption='Дата рождения' />
+                            <Column dataField='address' caption='Адрес' />
+                            <Column dataField='education' caption='Образование' />
+                            <Column dataField='info' caption='О себе' />
+                            <Column dataField='diplom' caption='О дипломе' />
                         </DataGrid>
                     </Grid>
                 </Grid>

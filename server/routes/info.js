@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import Product from '../models/Product';
+import Info from '../models/Info';
 
 const router = Router();
 
 router.get('/', (req, res) => {
-    Product.find()
+    Info.find()
         .then((data) => {
             res.json(data);
         })
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/filter', (req, res) => {
-    Product.find(req.query)
+    Info.find(req.query)
         .then((data) => {
             res.json(data);
         })
@@ -24,7 +24,7 @@ router.get('/filter', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    new Product(req.body)
+    new Info(req.body)
         .save()
         .then((data) => {
             res.json(data);
@@ -35,10 +35,10 @@ router.post('/', (req, res) => {
 });
 
 router.patch('/', (req, res) => {
-    Product.findOneAndUpdate({ _id: req.body._id }, req.body)
+    Info.findOneAndUpdate({ _id: req.body._id }, req.body)
         .then((data) => {
             if (!data)
-                return res.status('404').json({ message: 'Нет такого товара' })
+                return res.status('404').json({ message: 'Нет такой информации' })
             res.json(data);
         })
         .catch((e) => {
@@ -47,10 +47,10 @@ router.patch('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-    Product.findOneAndDelete({ _id: req.body._id })
+    Info.findOneAndDelete({ _id: req.body._id })
         .then((data) => {
             if (!data)
-                return res.status('404').json({ message: 'Товар уже удален' })
+                return res.status('404').json({ message: 'Информация уже удалена' })
             res.json(data);
         })
         .catch((e) => {

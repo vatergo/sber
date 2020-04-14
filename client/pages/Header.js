@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from '../../public/logo.jpg';
 import { Link } from 'react-router-dom';
 import { withStyles, Button, IconButton } from '@material-ui/core';
-import { Instagram, AccountBox, ShoppingCart } from '@material-ui/icons';
+import { Info } from '@material-ui/icons';
 import Auth from './Auth';
 
 class Header extends Component {
@@ -20,21 +20,12 @@ class Header extends Component {
         return (
             <>
                 <div className={classes.header}>
-                    <div className={classes.tools}>
-                        <a href='https://www.instagram.com/wool_mary/' target="_blank" className={classes.link}>
-                            <IconButton>
-                                <Instagram fontSize="large" />
-                            </IconButton>
-                        </a>
-                        <a href='https://vk.com/id171959132' target="_blank" className={classes.link}>
-                            <IconButton>
-                                <AccountBox fontSize="large" />
-                            </IconButton>
-                        </a>
+                    <div className={classes.tools} style={{ justifyContent: 'flex-start' }}>
+                        <Link to={'/students'}>
+                            <img src={logo} alt='logo' className={classes.logo} />
+                        </Link>
                     </div>
-                    <Link to={'/catalog'}>
-                        <img src={logo} alt='logo' className={classes.logo} />
-                    </Link>
+
                     <div className={classes.tools} style={{ justifyContent: 'flex-end' }}>
                         {!userData
                             ? <Button
@@ -47,12 +38,11 @@ class Header extends Component {
                                 onClick={onExit}>
                                 Выйти
                         </Button>}
-                        <Link to={'/basket'}>
+                        {userData && <Link to={'/about'}>
                             <IconButton>
-                                <ShoppingCart fontSize="large" />
+                                <Info fontSize="large" />
                             </IconButton>
-                        </Link>
-
+                        </Link>}
                     </div>
                 </div>
                 <div className={classes.divider}>.</div>

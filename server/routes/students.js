@@ -1,10 +1,20 @@
 import { Router } from 'express';
-import Сategory from '../models/Сategory';
+import Student from '../models/Student';
 
 const router = Router();
 
 router.get('/', (req, res) => {
-    Сategory.find()
+    Student.find()
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((e) => {
+            res.status(500).json({ message: 'Произошла ошибка' });
+        });
+});
+
+router.get('/filter', (req, res) => {
+    Student.find(req.query)
         .then((data) => {
             res.json(data);
         })
@@ -14,7 +24,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    new Сategory(req.body)
+    new Student(req.body)
         .save()
         .then((data) => {
             res.json(data);
@@ -25,10 +35,10 @@ router.post('/', (req, res) => {
 });
 
 router.patch('/', (req, res) => {
-    Сategory.findOneAndUpdate({ _id: req.body._id }, req.body)
+    Student.findOneAndUpdate({ _id: req.body._id }, req.body)
         .then((data) => {
             if (!data)
-                return res.status('404').json({ message: 'Нет такой категории' })
+                return res.status('404').json({ message: 'Нет такого студента' })
             res.json(data);
         })
         .catch((e) => {
@@ -37,10 +47,10 @@ router.patch('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-    Сategory.findOneAndDelete({ _id: req.body._id })
+    Student.findOneAndDelete({ _id: req.body._id })
         .then((data) => {
             if (!data)
-                return res.status('404').json({ message: 'Категория товаров уже удалена' })
+                return res.status('404').json({ message: 'Студент уже удалена' })
             res.json(data);
         })
         .catch((e) => {

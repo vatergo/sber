@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Loading from './Loading';
-import { withStyles, List, ListItem, ListItemText } from '@material-ui/core';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 
 
-class Categories extends Component {
+class ListOfStudents extends Component {
     constructor(props) {
         super(props);
         this.state = ({
@@ -14,7 +14,7 @@ class Categories extends Component {
     }
 
     componentDidMount() {
-        axios.get('/api/categories')
+        axios.get('/api/students')
             .then((result) => this.setState({
                 data: result.data,
                 loading: false,
@@ -23,7 +23,7 @@ class Categories extends Component {
     }
 
     render() {
-        const { classes, selected, onClick } = this.props;
+        const { selected, onClick } = this.props;
         const { loading, data } = this.state;
         const listItems = data.map((item, i) => (<ListItem
             key={item._id}
@@ -44,9 +44,4 @@ class Categories extends Component {
     }
 }
 
-const styles = {
-    categories: {
-    },
-};
-
-export default withStyles(styles)(Categories);
+export default ListOfStudents;

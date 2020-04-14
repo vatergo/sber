@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Header from './Header';
-import Categories from './Categories';
 import { withStyles } from '@material-ui/core/styles';
 
 import ruMessages from "devextreme/localization/messages/ru.json";
